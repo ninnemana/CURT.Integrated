@@ -3,24 +3,18 @@
  */
 package curt.android.ginger.Part;
 
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
-import curt.android.ginger.R;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import curt.android.ginger.R;
 
 /**
  * @author alexninneman
@@ -28,9 +22,16 @@ import android.widget.TextView;
  */
 public class PartListAdapter extends ArrayAdapter<Part> {
 
-	Activity activity;
-	List<Part> parts;
+	private ImageDownloader imgDownloader = new ImageDownloader();
+	private Activity activity;
+	private List<Part> parts;
 	
+	/*
+	 * Override the constructor for ArrayAdapter
+	 * @param activity the Activity that contains the ListView
+	 * @param textViewResourceId We're not going to use this, we need to pass it to the super
+	 * @param parts The List of Part objects to paint to our ListView
+	 */
 	@SuppressWarnings("unchecked")
 	public PartListAdapter(Activity activity, int textViewResourceId, List<Part> parts){
 		super(activity, textViewResourceId, R.layout.part_list_row);
@@ -38,6 +39,10 @@ public class PartListAdapter extends ArrayAdapter<Part> {
 		this.parts = parts;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.ArrayAdapter#getView(int, android.view.View, android.view.ViewGroup)
+	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent){
 		View row = convertView;
@@ -57,7 +62,7 @@ public class PartListAdapter extends ArrayAdapter<Part> {
 			String imgPath = null;
 			for(Iterator<Images> i = part_images.iterator(); i.hasNext();){
 				Images img = i.next();
-				if(img.getWidth().intValue() > 150){
+				if(img.getWidth().intValue() > 250){
 					imgPath = img.getPath();
 					break;
 				}
@@ -65,20 +70,25 @@ public class PartListAdapter extends ArrayAdapter<Part> {
 			
 			try{
 				ImageView img = ((ImageView)row.findViewById(R.id.imageview));
-				Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(imgPath).getContent());
-				img.setImageBitmap(bitmap);
-			}catch(MalformedURLException e){
-				e.printStackTrace();
+				imgDownloader.download(imgPath.replaceAll("\\\\", "/"), img);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-
+			
+			Typeface tf = Typeface.createFromAsset(this.getContext().getAssets(), "fonts/ITCAvantGardeStd_Bold.otf");
 			((TextView)row.findViewById(R.id.textview)).setText(part.getShortDesc().trim());
+			TextView tv = (TextView) row.findViewById(R.id.textview);
+			tv.setText(part.getShortDesc().trim());
+			tv.setTypeface(tf);
 		}
 		
 		return row;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.ArrayAdapter#getCount()
+	 */
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub

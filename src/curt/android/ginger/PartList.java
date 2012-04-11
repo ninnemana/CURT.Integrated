@@ -1,7 +1,6 @@
 package curt.android.ginger;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import configr.Configurator;
@@ -9,18 +8,14 @@ import configr.Configurator.configStates;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import curt.android.ginger.CategoryObject.Category;
 import curt.android.ginger.Part.*;
 
 public class PartList extends ListActivity {
 
 	// Async objects
-	private static ProgressDialog progressDialog;
 	private static Handler handler;
 	private Thread downloadThread;
 	
@@ -52,12 +47,9 @@ public class PartList extends ListActivity {
 		}
 		parts = new ArrayList<Part>();
 		
-		//adapter = new PartListAdapter(this, R.layout.part_list_row, parts);
-		//setListAdapter(adapter);
-		
 		downloadThread = (Thread) getLastNonConfigurationInstance();
 		if(downloadThread != null && downloadThread.isAlive()){
-			//progressDialog = ProgressDialog.show(this, "Please wait...", "Retrieving parts...");
+			
 		}
 		loadParts();
 	}
@@ -69,7 +61,6 @@ public class PartList extends ListActivity {
 	}
 	
 	public void loadParts(){
-		//progressDialog = ProgressDialog.show(CURTIntialActivity.context, "Please Wait...", "Retrieving parts...");
 		downloadThread = new MyThread();
 		downloadThread.start();
 	}
@@ -77,10 +68,6 @@ public class PartList extends ListActivity {
 	// Dismiss dialog if activity is destroyed
 	@Override
 	protected void onDestroy(){
-		/*if(progressDialog != null && progressDialog.isShowing()){
-			progressDialog.dismiss();
-			progressDialog = null;
-		}*/
 		super.onDestroy();
 	}
 	
@@ -136,8 +123,6 @@ public class PartList extends ListActivity {
 				adapter = new PartListAdapter(partListContext,R.layout.part_list_row, parts);
 				setListAdapter(adapter);
 			}
-			
-			//progressDialog.dismiss();
 		}
 	}
 	

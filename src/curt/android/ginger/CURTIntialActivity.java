@@ -1,12 +1,8 @@
 package curt.android.ginger;
 
-import java.util.HashMap;
-
-import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.view.LayoutInflater;
@@ -34,13 +30,6 @@ public class CURTIntialActivity extends TabActivity {
         
         setupTabHost();
         mTabHost = (TabHost) findViewById(android.R.id.tabhost);
-        
-        //mTabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
-        
-        /*Intent intent = new Intent().setClass(this,CategoryGroup.class);
-        TabHost.TabSpec spec;
-        spec = mTabHost.newTabSpec("CategoryGroup").setIndicator("CategoryGroup").setContent(intent);
-        mTabHost.addTab(spec);*/
         
         setupTab(new TextView(this), "categories", new Intent().setClass(this, CategoryGroup.class));
         setupTab(new TextView(this), "lookup", new Intent().setClass(this, LookupGroup.class));

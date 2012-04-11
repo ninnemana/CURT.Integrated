@@ -13,6 +13,7 @@ import android.app.ListActivity;
 import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -24,6 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class Lookup extends ListActivity {
 
@@ -89,13 +91,9 @@ public class Lookup extends ListActivity {
 		// Reset our options to an empty String array
 		options = new ArrayList<String>();
 		
-		// Bind our adapter to the ListView
-		//adapter = new ArrayAdapter<String>(this, R.layout.lookup_list_row,R.id.lookup_option, options);
-		//setListAdapter(adapter);
-		
 		thread = (Thread) getLastNonConfigurationInstance();
 		if(thread != null && thread.isAlive()){
-			//dialog = ProgressDialog.show(this, "Please wait...", "Retrieving options...");
+			// TO DO
 		}
 		setConfiguration();
 	}
@@ -119,7 +117,6 @@ public class Lookup extends ListActivity {
 		config.setMake(make);
 		config.setModel(model);
 		config.setStyle(style);
-		//dialog = ProgressDialog.show(CURTIntialActivity.context, "Please wait...", "Loading options...");
 		thread = new LookupThread();
 		thread.start();
 	}
@@ -173,6 +170,12 @@ public class Lookup extends ListActivity {
 			adapter = new ArrayAdapter<String>(Lookup.this, R.layout.lookup_list_row, R.id.lookup_option, options);
 			setListAdapter(adapter);
 			
+			TextView tv = (TextView)findViewById(R.id.lookup_option);
+			if(tv != null){
+				Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/ITCAvantGardeStd_Bold.otf");
+				tv.setTypeface(tf);
+			}
+			
 			listView.setOnItemClickListener(new OnItemClickListener(){
 
 				public void onItemClick(AdapterView<?> parent, View view,
@@ -215,7 +218,6 @@ public class Lookup extends ListActivity {
 					LookupGroup.group.replaceView(newView);
 				}
 			});
-			//dialog.dismiss();
 		}
 	}
 	

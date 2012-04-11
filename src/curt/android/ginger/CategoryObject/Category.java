@@ -12,7 +12,7 @@ import curt.android.ginger.JSONHandler;
 import curt.android.ginger.Part.*;
 
 public class Category{
-   	private List contentBridges;
+   	private List<ContentBridges> contentBridges;
    	private List lifestyle_Trailers;
    	private Number catID;
    	private String catTitle;
@@ -132,7 +132,7 @@ public class Category{
 	}
 	
 	public List<Part> GetCategoryParts(){
-		String url = "GetCategoryParts?dataType=JSON&catID=" + this.catID;
+		String url = "GetCategoryParts?dataType=JSON&catID=" + this.catID.intValue();
 		String jString = JSONHandler.getJSONListFromURL(url);
 		Gson gson = new Gson();
 		List<Part> parts = null;

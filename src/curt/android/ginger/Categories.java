@@ -7,42 +7,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import android.app.Activity;
-import android.app.ActivityGroup;
-import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LocalActivityManager;
-import android.app.ProgressDialog;
-import android.app.TabActivity;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.TabHost.TabSpec;
+
 import curt.android.ginger.CategoryObject.Category;
-import curt.android.ginger.CategoryObject.CategoryAdapter;
-import curt.android.ginger.Part.Part;
-import curt.android.ginger.Part.PartListAdapter;
-import curt.android.ginger.PartList.MyRunnable;
-import curt.android.ginger.PartList.MyThread;
 
 /**
  * @author alexninneman
@@ -51,11 +33,10 @@ import curt.android.ginger.PartList.MyThread;
 public class Categories extends ListActivity {
 	
 	// Async objects
-	private static ProgressDialog progressDialog;
 	private static Handler handler;
 	private Thread downloadThread;
 	
-	List<Category> cats;
+	private List<Category> cats;
 	List<String> cat_list;
 	ArrayAdapter<String> adapter;
 	String result = "";
@@ -64,48 +45,37 @@ public class Categories extends ListActivity {
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
-		Gson gson = new Gson();
-		String jString = gson.toJson(cats);
-		outState.putString("categories_json", jString);
+		outState.putInt("catID", catID.intValue());
 		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle state) {
-		// TODO Auto-generated method stub
-		Gson gson = new Gson();
-		String jString = state.getString("categories_json");
-		cats = gson.fromJson(jString, new TypeToken<List<Part>>(){}.getType());
-		super.onRestoreInstanceState(state);
 	}
 
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.cat_list);
+		setContentView(R.layout.loading);
 		handler = new Handler();
 		
-		filterText = new EditText(this);
-		filterText.setHint("Type to Filter");
-		ListView list = getListView();
-		list.addHeaderView(filterText, null, true);
-		filterText.addTextChangedListener(filterTextWatcher);
-		
 		// Attempt to retrieve a category from Bundle
-		Bundle bundle = this.getIntent().getExtras();
-		catID = 0;
-		if(bundle != null){
-			catID = (int)bundle.getDouble("catID", 0);
+		if(catID == null){
+			catID = 0;
+		}
+		
+		if(savedInstanceState != null){
+			catID = (int)savedInstanceState.getDouble("catID");
+		}else{
+			Bundle bundle = this.getIntent().getExtras();
+			if(bundle != null){
+				catID = (int)bundle.getDouble("catID");
+			}
+		}
+		if(catID == null){
+			catID = 0;
 		}
 		
 		cat_list = new ArrayList<String>();
 		
-		adapter = new ArrayAdapter<String>(this, R.layout.cat_list_row, R.id.textview, cat_list);
-		setListAdapter(adapter);
-		
 		downloadThread = (Thread) getLastNonConfigurationInstance();
 		if(downloadThread != null && downloadThread.isAlive()){
-			progressDialog = ProgressDialog.show(this, "Please wait...", "Retrieving categories...");
+			// TO-DO
 		}
 		loadCats();
 		
@@ -120,7 +90,6 @@ public class Categories extends ListActivity {
 	};
 	
 	private void loadCats(){
-		progressDialog = ProgressDialog.show(CURTIntialActivity.context, "Please Wait...", "Retrieving categories...");
 		downloadThread = new MyThread();
 		downloadThread.start();
 	}
@@ -134,10 +103,6 @@ public class Categories extends ListActivity {
 	// Dismiss dialog if activity is destroyed
 	@Override
 	protected void onDestroy(){
-		if(progressDialog != null && progressDialog.isShowing()){
-			progressDialog.dismiss();
-			progressDialog = null;
-		}
 		super.onDestroy();
 		filterText.removeTextChangedListener(filterTextWatcher);
 	}
@@ -146,13 +111,6 @@ public class Categories extends ListActivity {
 		@Override
 		public void run(){
 			try{
-				// Simulate a slow network
-				try{
-					new Thread().sleep(5000);
-				}catch(InterruptedException e){
-					e.printStackTrace();
-				}
-				
 				handler.post(new CategoryRunnable());
 			}catch(Exception e){
 				e.printStackTrace();
@@ -160,73 +118,83 @@ public class Categories extends ListActivity {
 		}
 	}
 	
+	public void paintResults(){
+		cat_list = new ArrayList<String>();
+		if(cats == null){
+			cats = new ArrayList<Category>();
+			if(catID == null || catID.equals(0)){
+				// Retrieve all the parent categories
+				cats.clear();
+				cats = new Category().GetParents();
+			}else{
+				Category cat = new Category();
+				cat.setCatID(catID);
+				cats.clear();
+				cats = cat.GetSubcategories();
+			}
+		}
+		
+		// Iterate through our List of Category objects to retrieve the title of the object
+		for(Iterator<Category> i = cats.iterator(); i.hasNext();){
+			Category cat = i.next();
+			cat_list.add(cat.getCatTitle().trim());
+		}
+		setContentView(R.layout.cat_list);
+		ListView list = getListView();
+		
+		if(list.getAdapter() == null){
+			filterText = new EditText(getApplicationContext());
+			filterText.setHint("Type to Filter");
+			filterText.addTextChangedListener(filterTextWatcher);
+			list.addHeaderView(filterText, null, true);
+		}
+		TextView tv = (TextView)findViewById(R.id.textview);
+		if(tv != null){
+			Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/ITCAvantGardeStd_Bold.otf");
+			tv.setTypeface(tf);
+		}
+		
+		adapter = new ArrayAdapter<String>(Categories.this,R.layout.cat_list_row,R.id.textview, cat_list);
+		setListAdapter(adapter);
+		
+		
+	}
+	
 	public class CategoryRunnable implements Runnable{
 		public void run(){
-			if(cats == null){
-				cats = new ArrayList<Category>();
-				if(catID.equals(0)){
-					// Retrieve all the parent categories
-					cats.clear();
-					cats = new Category().GetParents();
-				}else{
-					Category cat = new Category();
-					cat.setCatID(catID);
-					cats.clear();
-					cats = cat.GetSubcategories();
-				}
-			}
-			cat_list = new ArrayList<String>();
-			
-			// Iterate through our List of Category objects to retrieve the title of the object
-			for(Iterator<Category> i = cats.iterator(); i.hasNext();){
-				Category cat = i.next();
-				cat_list.add(cat.getCatTitle().trim());
-			}
-			
-			adapter = new ArrayAdapter<String>(Categories.this,R.layout.cat_list_row,R.id.textview, cat_list);
-			setListAdapter(adapter);
+			paintResults();
 			
 			ListView list = getListView();
-			list.setTextFilterEnabled(true);
-			
 			list.setOnItemClickListener(new OnItemClickListener(){
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-					String selected = (String) parent.getItemAtPosition(position);
-					for(Iterator<Category> i = cats.iterator(); i.hasNext();){
-						Category cat = i.next();
-						if(selected.equalsIgnoreCase(cat.getCatTitle().trim())){
-							List<Category> subs = cat.GetSubcategories();
-							
-							// Create our Bundle and our Intent
-							Intent intent;
-							Bundle intentBundle = new Bundle();
-							
-							// Throw out catID into the Bundle
-							intentBundle.putDouble("catID", cat.getCatID().doubleValue());
-							
-							if(subs != null && subs.size() > 0){
-
-								intent = new Intent(getApplicationContext(), Categories.class);
-							}else{ // Load category products
-								
-								intent = new Intent(getApplicationContext(), PartList.class);
-								
-							}
-							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-							intent.putExtras(intentBundle);
-							
-							// Create the view using 
-							LocalActivityManager processManager = CategoryGroup.group.getLocalActivityManager();
-							Window w = processManager.startActivity(cat.getCatTitle().trim(), intent);
-							View newView = w.getDecorView();
-							
-							CategoryGroup.group.replaceView(newView);
-							
-						}
+					Category cat = cats.get(position - 1);
+					catID = cat.getCatID();
+					setContentView(R.layout.loading);
+					List<Category> subs = cat.GetSubcategories();
+					
+					// Create our Bundle and our Intent
+					Intent intent;
+					Bundle intentBundle = new Bundle();
+					
+					// Throw out catID into the Bundle
+					intentBundle.putDouble("catID", cat.getCatID().doubleValue());
+					
+					if(subs != null && subs.size() > 0){
+						intent = new Intent(getApplicationContext(), Categories.class);
+					}else{ // Load category products
+						intent = new Intent(getApplicationContext(), PartList.class);
 					}
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					intent.putExtras(intentBundle);
+					
+					// Create the view using 
+					LocalActivityManager processManager = CategoryGroup.group.getLocalActivityManager();
+					Window w = processManager.startActivity(cat.getCatTitle().trim(), intent);
+					View newView = w.getDecorView();
+					
+					CategoryGroup.group.replaceView(newView);
 				}
 			});
-			progressDialog.dismiss();
 		}
 	}
 	

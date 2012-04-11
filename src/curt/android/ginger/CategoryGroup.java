@@ -1,14 +1,9 @@
 package curt.android.ginger;
 
 import java.util.ArrayList;
-
-import curt.android.ginger.CategoryObject.Category;
-
 import android.app.ActivityGroup;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 
 public class CategoryGroup extends ActivityGroup {
