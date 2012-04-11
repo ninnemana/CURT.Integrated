@@ -106,7 +106,7 @@ public class Category{
 	}
 	
 	public List<Category> GetParents(){
-		String url = "http://api.curtmfg.com/v2/GetParentCategories?dataType=JSON";
+		String url = "GetParentCategories?dataType=JSON";
 		String jString = JSONHandler.getJSONListFromURL(url);
 		Gson gson = new Gson();
 		List<Category> cats = null;
@@ -119,7 +119,7 @@ public class Category{
 	}
 	
 	public List<Category> GetSubcategories(){
-		String url = "http://api.curtmfg.com/v2/GetCategories?dataType=JSON&parentID=" + this.catID;
+		String url = "GetCategories?dataType=JSON&parentID=" + this.catID;
 		String jString = JSONHandler.getJSONListFromURL(url);
 		Gson gson = new Gson();
 		List<Category> subs = null;
@@ -132,7 +132,7 @@ public class Category{
 	}
 	
 	public List<Part> GetCategoryParts(){
-		String url = "http://api.curtmfg.com/v2/GetCategoryParts?dataType=JSON&catID=" + this.catID;
+		String url = "GetCategoryParts?dataType=JSON&catID=" + this.catID;
 		String jString = JSONHandler.getJSONListFromURL(url);
 		Gson gson = new Gson();
 		List<Part> parts = null;

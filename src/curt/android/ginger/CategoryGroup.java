@@ -6,6 +6,7 @@ import curt.android.ginger.CategoryObject.Category;
 
 import android.app.ActivityGroup;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,7 +27,8 @@ public class CategoryGroup extends ActivityGroup {
 		group = this;
 		
 		// Start the root activity within the group and get its view
-		View view = getLocalActivityManager().startActivity("Category", new Intent(this,Categories.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)).getDecorView();
+		//View view = getLocalActivityManager().startActivity("Category", new Intent(this,Categories.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)).getDecorView();
+		View view = getLocalActivityManager().startActivity("Category", new Intent(this,Categories.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)).getDecorView();
 		
 		// Replace the view of this ActivityGroup
 		replaceView(view);
@@ -41,34 +43,15 @@ public class CategoryGroup extends ActivityGroup {
 	
 	public void back(){
 		if(history.size() > 0){
-			setContentView(history.get(history.size() - 1));
-			history.remove(history.size() - 1);
+			if(history.size() == 1){
+				setContentView(history.get(0));
+				history.remove(0);
+			}else{
+				setContentView(history.get(history.size() - 1));
+				history.remove(history.size() - 1);
+			}
 		}else{
 			finish();
 		}
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event){
-		if(keyCode == KeyEvent.KEYCODE_BACK && event.isTracking() && event.getRepeatCount() == 0){
-			event.startTracking();
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-	
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event){
-		if(keyCode == KeyEvent.KEYCODE_BACK && event.isTracking() && !event.isCanceled()){
-			CategoryGroup.group.back();
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-	
-	@Override
-	public void onBackPressed(){
-		CategoryGroup.group.back();
-		return;
 	}
 }

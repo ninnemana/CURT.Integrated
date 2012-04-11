@@ -43,7 +43,7 @@ public class CURTIntialActivity extends TabActivity {
         mTabHost.addTab(spec);*/
         
         setupTab(new TextView(this), "categories", new Intent().setClass(this, CategoryGroup.class));
-        setupTab(new TextView(this), "lookup");
+        setupTab(new TextView(this), "lookup", new Intent().setClass(this, LookupGroup.class));
         setupTab(new TextView(this), "scanner");
         
         if(savedInstanceState != null){

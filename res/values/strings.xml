@@ -2,6 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, CURTIntialActivity!</string>
-    <string name="app_name">CURT-4-Droid</string>
+    <string name="app_name">CURT Manufacturing, LLC</string>
+    <string name="cat_search">Type to Filter</string>
 
 </resources>

@@ -6,8 +6,7 @@ package curt.android.ginger;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.List;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,7 +16,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.xml.sax.Parser;
 
 import android.util.Log;
 
@@ -87,17 +85,15 @@ public class JSONHandler {
 		// initialize
 		InputStream is = null;
 		String result = "";
-		List<JSONObject> jArray = null;
-		
 		try{
 
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = null;
 			if(doPost){ // make post request
-				HttpPost post = new HttpPost(url);
+				HttpPost post = new HttpPost("http://api.curtmfg.com/v2/" + url);
 				response = client.execute(post);
 			}else{ // make get request
-				HttpGet get = new HttpGet(url);
+				HttpGet get = new HttpGet("http://api.curtmfg.com/v2/" + url);
 				response = client.execute(get);
 			}
 			HttpEntity entity = response.getEntity();

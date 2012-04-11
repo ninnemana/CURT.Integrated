@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import configr.Configurator;
+import configr.Configurator.configStates;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -24,28 +27,37 @@ public class PartList extends ListActivity {
 	// Application objects
 	private List<Part> parts = null;
 	private Number catID = null;
+	private String mount, year, make, model, style = null;
 	private PartListAdapter adapter;
+	private Configurator config;
 	private Activity partListContext;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.part_list);
+		setContentView(R.layout.loading);
 		partListContext = this.getParent();
+		this.catID = 0;
 		
 		// Create handler to update the UI
 		handler = new Handler();
 		
 		Bundle bundle = this.getIntent().getExtras();
-		this.catID = bundle.getDouble("catID", 0);
-		
+		if(bundle != null){
+			this.catID = bundle.getDouble("catID", 0);
+			this.mount = bundle.getString("mount");
+			this.year = bundle.getString("year");
+			this.make = bundle.getString("make");
+			this.model = bundle.getString("model");
+			this.style = bundle.getString("style");
+		}
 		parts = new ArrayList<Part>();
 		
-		adapter = new PartListAdapter(this, R.layout.part_list_row, parts);
-		setListAdapter(adapter);
+		//adapter = new PartListAdapter(this, R.layout.part_list_row, parts);
+		//setListAdapter(adapter);
 		
 		downloadThread = (Thread) getLastNonConfigurationInstance();
 		if(downloadThread != null && downloadThread.isAlive()){
-			progressDialog = ProgressDialog.show(this, "Please wait...", "Retrieving parts...");
+			//progressDialog = ProgressDialog.show(this, "Please wait...", "Retrieving parts...");
 		}
 		loadParts();
 	}
@@ -57,7 +69,7 @@ public class PartList extends ListActivity {
 	}
 	
 	public void loadParts(){
-		progressDialog = ProgressDialog.show(CURTIntialActivity.context, "Please Wait...", "Retrieving parts...");
+		//progressDialog = ProgressDialog.show(CURTIntialActivity.context, "Please Wait...", "Retrieving parts...");
 		downloadThread = new MyThread();
 		downloadThread.start();
 	}
@@ -65,10 +77,10 @@ public class PartList extends ListActivity {
 	// Dismiss dialog if activity is destroyed
 	@Override
 	protected void onDestroy(){
-		if(progressDialog != null && progressDialog.isShowing()){
+		/*if(progressDialog != null && progressDialog.isShowing()){
 			progressDialog.dismiss();
 			progressDialog = null;
-		}
+		}*/
 		super.onDestroy();
 	}
 	
@@ -81,37 +93,51 @@ public class PartList extends ListActivity {
 		return parts;
 	}
 	
+	/**
+	 * @return the catID
+	 */
+	public Number getCatID() {
+		return catID;
+	}
+
+	/**
+	 * @param catID the catID to set
+	 */
+	public void setCatID(Number catID) {
+		this.catID = catID;
+	}
+
 	public class MyThread extends Thread{
 		@Override
 		public void run(){
-			try{
-				// Simulate a slow network
-				try{
-					new Thread().sleep(5000);
-				}catch(InterruptedException e){
-					e.printStackTrace();
-				}
-				
-				parts = getCategoryParts();			
-				handler.post(new MyRunnable());
-			}catch(Exception e){
-				e.printStackTrace();
-			}
+			handler.post(new MyRunnable());
 		}
 	}
 	
 	public class MyRunnable implements Runnable{
 		public void run(){
+			try{
+				
+				if(catID != null && catID.intValue() > 0){
+					parts = getCategoryParts();
+				}else{
+					config = new Configurator(mount,year,make,model,style);
+					if(config.state.equals(configStates.CONFIGURED)){
+						parts = config.getParts();
+					}else{
+						parts = new ArrayList<Part>();
+					}
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			setContentView(R.layout.part_list);
 			if(parts != null && parts.size() > 0){
 				adapter = new PartListAdapter(partListContext,R.layout.part_list_row, parts);
-				/*for(Iterator<Part> i = parts.iterator(); i.hasNext();){
-					Part p = i.next();
-					adapter.add(p);
-					adapter.notifyDataSetChanged();
-				}*/
 				setListAdapter(adapter);
 			}
-			progressDialog.dismiss();
+			
+			//progressDialog.dismiss();
 		}
 	}
 	

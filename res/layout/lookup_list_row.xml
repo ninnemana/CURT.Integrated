@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:background="@android:color/white"
+    android:layout_height="wrap_content">
+
+    <TextView style="@style/ListViewRow"
+        android:layout_width="fill_parent"
+        android:background="@drawable/lookup_list_row_selector"
+        android:id="@+id/lookup_option"/>
+</LinearLayout>
