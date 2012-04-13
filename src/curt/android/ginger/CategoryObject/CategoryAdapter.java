@@ -3,18 +3,27 @@ package curt.android.ginger.CategoryObject;
 import java.util.List;
 
 import curt.android.ginger.R;
+import curt.android.ginger.Part.*;
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class CategoryAdapter extends ArrayAdapter {
 	private final Activity activity;
 	private final List<Category> cats;
+	private ImageDownloader imgDownloader = new ImageDownloader();
 	
-	// Initialize adapter
+	/*
+	 * Override the constructor for ArrayAdapter
+	 * @param activity	the Activity that contains the ListView
+	 * @param cats		List of Category objects to paint into the adapter
+	 */
 	@SuppressWarnings("unchecked")
 	public CategoryAdapter(Activity activity, List<Category> cats){
 		super(activity, R.layout.cat_list, cats);
@@ -22,37 +31,48 @@ public class CategoryAdapter extends ArrayAdapter {
 		this.cats = cats;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.widget.ArrayAdapter#getView(int, android.view.View, android.view.ViewGroup)
+	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent){
-		View rowView = convertView;
-		CategoryView catView = null;
+		View row = convertView;
 		
-		if(rowView == null){
-			// Get a new instance of the row layout view
+		// we call an if statement on our view that is passed in,
+		// to see if it has been recycled or not. if it has been recycled
+		// this it already exists and we do not need to call the inflater function
+		// this saves us a HUGE amount of resources and processing
+		if(row == null){
 			LayoutInflater inflater = activity.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.cat_list, null);
-			
-			// Hold the view objects in an object,
-			// so they don't need to be refetched
-			catView = new CategoryView();
-			catView.txtCatTitle = (TextView) rowView.findViewById(R.id.txtCatTitle);
-			
-			// Cache the view objects in the tag,
-			// so they can be re-accessed later
-			rowView.setTag(catView);			
-		}else{
-			catView = (CategoryView) rowView.getTag();
+			row = inflater.inflate(R.layout.cat_list_row, null);
 		}
-		// Transfer the Category data from the data object
-		// to the view objects
-		Category cat = cats.get(position);
-		catView.txtCatTitle.setText(cat.getCatTitle());
 		
-		return rowView;
+		Category cat = cats.get(position);
+		if(cat != null){
+			CategoryView catView = new CategoryView();
+			try{
+				String img = cat.getImage();
+				catView.imgView = (ImageView)row.findViewById(R.id.cat_image);
+				imgDownloader.download(img.replaceAll("\\\\", "/"), catView.imgView);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			catView.catTitle = (TextView)row.findViewById(R.id.cat_title);
+			catView.catTitle.setText(cat.getCatTitle());
+			
+			catView.catDesc = (TextView)row.findViewById(R.id.cat_desc);
+			catView.catDesc.setText(cat.getShortDesc());
+			row.setTag(catView);
+		}
+		return row;
 	}
 	
 	protected static class CategoryView{
-		protected TextView txtCatTitle;
+		ImageView imgView;
+		TextView catTitle;
+		TextView catDesc;
 	}
 	
 }

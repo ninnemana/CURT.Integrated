@@ -3,14 +3,25 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent" 
     android:baselineAligned="false" 
+    android:orientation="vertical"
     android:background="@drawable/lookup_list_selector">
+        
+    <EditText android:id="@+id/filter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:inputType="textAutoComplete"
+        android:hint="Type to filter" />
+    
+    <TextView android:id="@+id/lookup_history"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#ededed" />
     
     <ListView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:transcriptMode="normal"
         android:id="@android:id/list" />
-	<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/txtOption" />  
 </LinearLayout>

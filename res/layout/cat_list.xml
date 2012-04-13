@@ -8,9 +8,5 @@
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@android:id/list" />
-	<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/txtCatTitle" />  
+        android:id="@android:id/list" /> 
 </LinearLayout>

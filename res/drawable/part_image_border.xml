@@ -8,8 +8,8 @@
                 android:endColor="#b2b2b2" />
         </shape>
     </item>
-    <item android:top="18dp" android:left="18dp" 
-        android:right="18dp" android:bottom="18dp">
+    <item android:top="3dp" android:left="3dp" 
+        android:right="3dp" android:bottom="3dp">
         <shape android:shape="rectangle">
             <solid android:color="#ededed" />
         </shape>

@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import curt.android.ginger.CategoryObject.Category;
+import curt.android.ginger.CategoryObject.CategoryAdapter;
 
 /**
  * @author alexninneman
@@ -37,8 +38,7 @@ public class Categories extends ListActivity {
 	private Thread downloadThread;
 	
 	private List<Category> cats;
-	List<String> cat_list;
-	ArrayAdapter<String> adapter;
+	CategoryAdapter adapter;
 	String result = "";
 	Number catID = 0;
 	EditText filterText;
@@ -70,8 +70,6 @@ public class Categories extends ListActivity {
 		if(catID == null){
 			catID = 0;
 		}
-		
-		cat_list = new ArrayList<String>();
 		
 		downloadThread = (Thread) getLastNonConfigurationInstance();
 		if(downloadThread != null && downloadThread.isAlive()){
@@ -119,7 +117,6 @@ public class Categories extends ListActivity {
 	}
 	
 	public void paintResults(){
-		cat_list = new ArrayList<String>();
 		if(cats == null){
 			cats = new ArrayList<Category>();
 			if(catID == null || catID.equals(0)){
@@ -133,12 +130,7 @@ public class Categories extends ListActivity {
 				cats = cat.GetSubcategories();
 			}
 		}
-		
-		// Iterate through our List of Category objects to retrieve the title of the object
-		for(Iterator<Category> i = cats.iterator(); i.hasNext();){
-			Category cat = i.next();
-			cat_list.add(cat.getCatTitle().trim());
-		}
+
 		setContentView(R.layout.cat_list);
 		ListView list = getListView();
 		
@@ -154,10 +146,8 @@ public class Categories extends ListActivity {
 			tv.setTypeface(tf);
 		}
 		
-		adapter = new ArrayAdapter<String>(Categories.this,R.layout.cat_list_row,R.id.textview, cat_list);
+		adapter = new CategoryAdapter(Categories.this, cats);
 		setListAdapter(adapter);
-		
-		
 	}
 	
 	public class CategoryRunnable implements Runnable{

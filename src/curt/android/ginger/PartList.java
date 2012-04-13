@@ -126,4 +126,14 @@ public class PartList extends ListActivity {
 		}
 	}
 	
+	@Override
+	public void onBackPressed(){
+		if(catID != null && catID.intValue() > 0){
+			CategoryGroup.group.back();
+		}else{
+			LookupGroup.group.back();
+		}
+		return;
+	}
+	
 }

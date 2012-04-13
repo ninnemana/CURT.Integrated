@@ -10,13 +10,26 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <ImageView
+        android:orientation="vertical"
+        android:id="@+id/loading_layout" >
+		
+		<!--curt.android.gif.GIFView
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+		    android:id="@+id/loading_gif">
+		</curt.android.gif.GIFView-->
+        
+        <!--ImageView
+            android:id="@+id/loading_gif"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" /-->
+        
+        <!--ImageView
             android:id="@+id/loading_gif"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/loader" />
+            android:src="@drawable/loader" /-->
 
         <TextView
             android:id="@+id/loading_text"

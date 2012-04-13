@@ -287,4 +287,8 @@ public class Configurator {
 		}
 		
 	}
+	
+	public void clear(){
+		this.mount = this.year = this.make = this.model = this.style = null;
+	}
 }

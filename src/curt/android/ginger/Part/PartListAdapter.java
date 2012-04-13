@@ -68,21 +68,28 @@ public class PartListAdapter extends ArrayAdapter<Part> {
 				}
 			}
 			
+			PartView partView = new PartView();
 			try{
-				ImageView img = ((ImageView)row.findViewById(R.id.imageview));
-				imgDownloader.download(imgPath.replaceAll("\\\\", "/"), img);
+				partView.imgView = ((ImageView)row.findViewById(R.id.imageview));
+				imgDownloader.download(imgPath.replaceAll("\\\\", "/"), partView.imgView);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 			
+			
 			Typeface tf = Typeface.createFromAsset(this.getContext().getAssets(), "fonts/ITCAvantGardeStd_Bold.otf");
-			((TextView)row.findViewById(R.id.textview)).setText(part.getShortDesc().trim());
-			TextView tv = (TextView) row.findViewById(R.id.textview);
-			tv.setText(part.getShortDesc().trim());
-			tv.setTypeface(tf);
+			partView.partTitle = ((TextView)row.findViewById(R.id.textview));
+			partView.partTitle.setText(part.getShortDesc().trim());
+			partView.partTitle.setTypeface(tf);
+			row.setTag(partView);
 		}
 		
 		return row;
+	}
+	
+	public class PartView{
+		ImageView imgView;
+		TextView partTitle;
 	}
 
 	/*

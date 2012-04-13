@@ -15,11 +15,11 @@ public class LookupGroup extends ActivityGroup {
 	
 	// Need to keep track of the history if you want the back-button to work properly
 	// don't use this if your activities require a lot of memory
-	private ArrayList<View> history;
+	public static ArrayList<View> history;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		this.history = new ArrayList<View>();
+		history = new ArrayList<View>();
 		group = this;
 		
 		// Start the root activity within the group and get its view

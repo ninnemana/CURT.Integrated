@@ -1,5 +1,7 @@
 package curt.android.ginger;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,22 +10,33 @@ import com.google.gson.reflect.TypeToken;
 
 import configr.Configurator;
 import configr.Configurator.configStates;
+import curt.android.gif.GIFView;
+import curt.android.gif.GifWebView;
 
 import android.app.ListActivity;
 import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Movie;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +48,7 @@ public class Lookup extends ListActivity {
 	private Thread thread;
 	
 	private Configurator config = new Configurator();
+	private Bitmap mBitmap;
 	List<String> options;
 	ArrayAdapter<String> adapter;
 	String mount, year, make, model, style;
@@ -72,7 +86,9 @@ public class Lookup extends ListActivity {
 		setContentView(R.layout.loading);
 		handler = new Handler();
 		
-		
+		GifWebView webView = new GifWebView(this, "file:///android_asset/loader.gif");
+		LinearLayout layout = (LinearLayout)findViewById(R.id.loading_layout);
+		layout.addView(webView);
 		
 		// Attempt to retrieve year, make, model, and style from the Bundle
 		Bundle bundle = this.getIntent().getExtras();
@@ -154,27 +170,53 @@ public class Lookup extends ListActivity {
 	public class LookupRunner implements Runnable{
 		public void run(){
 			options = new ArrayList<String>();
-			
 			options = config.getOptions();
 			
 			setContentView(R.layout.lookup_list);
+			
+			/*LinearLayout top_bar = new LinearLayout(getApplicationContext());
+			top_bar.setBackgroundColor(Color.WHITE);
+			
+			TextView tv = new TextView(getApplicationContext());
+			tv.setWidth(LayoutParams.FILL_PARENT);
+			tv.set
+			
+			String tv_text = "";
+			if(config.getMount() != null && config.getMount().length() > 0){
+				if(config.getMount().toUpperCase().trim() == "REAR"){
+					tv_text += " Rear Mount";
+				}else{
+					tv_text += " Front Mount";
+				}
+				if(config.getYear() != null && config.getYear().length() > 0){
+					tv_text += " " + config.getYear();
+					if(config.getMake() != null && config.getMake().length() > 0){
+						tv_text += " " + config.getMake();
+						if(config.getModel() != null && config.getModel().length() > 0){
+							tv_text += " " + config.getModel();
+							if(config.getStyle() != null && config.getStyle().length() > 0){
+								tv_text += " " + config.getStyle();
+							}
+						}
+					}
+				}
+			}
+			if(tv_text.length() > 0){
+				tv.setText(tv_text);
+				top_bar.addView(tv);
+			}
 			
 			filterText = new EditText(getApplicationContext());
 			filterText.setHint("Type to filter");
 			filterText.addTextChangedListener(filterTextWatcher);
 			
+			top_bar.addView(filterText);*/
 			listView = getListView();
-			listView.addHeaderView(filterText, null, true);
+			//listView.addHeaderView(top_bar, null, true);
 			listView.setTextFilterEnabled(true);
 			
 			adapter = new ArrayAdapter<String>(Lookup.this, R.layout.lookup_list_row, R.id.lookup_option, options);
 			setListAdapter(adapter);
-			
-			TextView tv = (TextView)findViewById(R.id.lookup_option);
-			if(tv != null){
-				Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/ITCAvantGardeStd_Bold.otf");
-				tv.setTypeface(tf);
-			}
 			
 			listView.setOnItemClickListener(new OnItemClickListener(){
 
@@ -223,6 +265,34 @@ public class Lookup extends ListActivity {
 	
 	@Override
 	public void onBackPressed(){
+		if(LookupGroup.history == null || LookupGroup.history.size() == 0){
+			config.setMount(null);
+			config.setYear(null);
+			config.setMake(null);
+			config.setModel(null);
+			config.setStyle(null);
+		}else if(LookupGroup.history.size() == 1){
+			config.setMount(null);
+			config.setYear(null);
+			config.setMake(null);
+			config.setModel(null);
+			config.setStyle(null);
+		}else if(LookupGroup.history.size() == 2){
+			config.setYear(null);
+			config.setMake(null);
+			config.setModel(null);
+			config.setStyle(null);
+		}else if(LookupGroup.history.size() == 3){
+			config.setMake(null);
+			config.setModel(null);
+			config.setStyle(null);
+		}else if(LookupGroup.history.size() == 4){
+			config.setModel(null);
+			config.setStyle(null);
+		}else if(LookupGroup.history.size() == 5){
+			config.setStyle(null);
+		}
+		
 		LookupGroup.group.back();
 		return;
 	}
