@@ -97,6 +97,16 @@ public class Configurator {
 	public String getMount() {
 		return mount;
 	}
+	
+	public String getDisplayableMount() {
+		String mount = "";
+		if(this.mount != null && this.mount.toLowerCase().contains("rear")){
+			mount = "Rear Mount";
+		}else{
+			mount = "Front Mount";
+		}
+		return mount;
+	}
 
 	/**
 	 * @param mount the mount to set
@@ -172,6 +182,7 @@ public class Configurator {
 	public List<String> getOptions() {
 		List<String> options = new ArrayList<String>();
 		if(this.mount == null || this.mount.length() == 0){
+			this.state = configStates.MOUNT;
 			options.add("Front Mount");
 			options.add("Rear Mount");
 		}else if(this.year == null || this.year.length() == 0){
@@ -189,6 +200,8 @@ public class Configurator {
 	public List<String> getYears(){
 		Gson gson = new Gson();
 		String url = "GetYear?dataType=JSON&mount=" + this.mount;
+		this.state = configStates.YEAR;
+		
 		
 		String jString = JSONHandler.getJSONListFromURL(url);
 		List<String> tmpYears = gson.fromJson(jString, new TypeToken<List<String>>(){}.getType());
@@ -206,6 +219,7 @@ public class Configurator {
 	
 	public List<String> getMakes(){
 		Gson gson = new Gson();
+		this.state = configStates.MAKE;
 		String url = "GetMake?dataType=JSON&mount=" + this.mount + "&year=" + this.year;
 		
 		String jString = JSONHandler.getJSONListFromURL(url);
@@ -218,6 +232,7 @@ public class Configurator {
 	
 	public List<String> getModels(){
 		Gson gson = new Gson();
+		this.state = configStates.MODEL;
 		String url = "GetModel?dataType=JSON&mount=" + URLEncoder.encode(this.mount) + "&year=" + URLEncoder.encode(this.year) + "&make=" + URLEncoder.encode(this.make);
 		
 		String jString = JSONHandler.getJSONListFromURL(url);
@@ -230,6 +245,7 @@ public class Configurator {
 	
 	public List<String> getStyles(){
 		Gson gson = new Gson();
+		this.state = configStates.STYLE;
 		String url = "GetStyle?dataType=JSON&mount=" + URLEncoder.encode(this.mount) + "&year=" + URLEncoder.encode(this.year) + "&make=" + URLEncoder.encode(this.make) + "&model=" + URLEncoder.encode(this.model);
 		
 		String jString = JSONHandler.getJSONListFromURL(url);
@@ -242,7 +258,13 @@ public class Configurator {
 	
 	public List<Part> getParts(){
 		Gson gson = new Gson();
-		String url = "GetParts?dataType=JSON&mount=" + this.mount + "&year=" + URLEncoder.encode(this.year) + "&make=" + URLEncoder.encode(this.make) + "&model=" + URLEncoder.encode(this.model) + "&style=" + URLEncoder.encode(this.style);
+		String mount = "";
+		if(mount.toLowerCase().contains("rear")){
+			mount = "rear";
+		}else{
+			mount = "front";
+		}
+		String url = "GetParts?dataType=JSON&mount=" + mount + "&year=" + URLEncoder.encode(this.year) + "&make=" + URLEncoder.encode(this.make) + "&model=" + URLEncoder.encode(this.model) + "&style=" + URLEncoder.encode(this.style);
 		
 		String jString = JSONHandler.getJSONListFromURL(url);
 		List<Part> parts = gson.fromJson(jString, new TypeToken<List<Part>>(){}.getType());
@@ -274,12 +296,16 @@ public class Configurator {
 	public void setState(){
 		if(this.mount == null || this.mount.length() == 0){
 			this.state = configStates.MOUNT;
+			this.year = this.make = this.model = this.style = null;
 		}else if(this.year == null || this.year.length() == 0){
 			this.state = configStates.YEAR;
+			this.make = this.model = this.style = null;
 		}else if(this.make == null || this.make.length() == 0){
 			this.state = configStates.MAKE;
+			this.model = this.style = null;
 		}else if(this.model == null || this.model.length() == 0){
 			this.state = configStates.MODEL;
+			this.style = null;
 		}else if(this.style == null || this.style.length() == 0){
 			this.state = configStates.STYLE;
 		}else{

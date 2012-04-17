@@ -22,4 +22,12 @@
 	    <item name="android:width">110dp</item>
 	    <item name="android:height">110dp</item>
     </style>
+    <style name="LookupHistory">
+        <item name="android:background">@drawable/lookup_history</item>
+        <item name="android:padding">10px</item>
+        <item name="android:textColor">#000</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    
 </resources>

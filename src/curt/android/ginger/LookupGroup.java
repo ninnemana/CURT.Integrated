@@ -24,7 +24,7 @@ public class LookupGroup extends ActivityGroup {
 		
 		// Start the root activity within the group and get its view
 		View view = getLocalActivityManager().startActivity("Lookup", 
-				new Intent(this,Lookup.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)).getDecorView();
+				new Intent(this,ConfigrMount.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)).getDecorView();
 		
 		// Replace the view of this ActivityGroup
 		replaceView(view);
