@@ -3,6 +3,18 @@
     	android:orientation="vertical"
     	android:layout_width="fill_parent"
     	android:layout_height="fill_parent">
+    	
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:background="#231f20"
+        android:contentDescription="CURT Manufacturing, LLC"
+        android:cropToPadding="true"
+        android:paddingBottom="10dp"
+        android:paddingLeft="4dp"
+        android:paddingTop="10dp"
+        android:src="@drawable/logo" />
+    
 	<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:id="@android:id/tabhost"
 	    android:layout_width="fill_parent"

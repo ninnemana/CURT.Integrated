@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, CURTIntialActivity!</string>
-    <string name="app_name">CURT Manufacturing, LLC</string>
+    <string name="app_name">CURT</string>
     <string name="cat_search">Type to Filter</string>
 
 </resources>
