@@ -213,7 +213,7 @@
               android:textSize="14sp"
               android:visibility="gone"/>
 
-      <!-- Button android:id="@+id/shopper_button"
+      <Button android:id="@+id/shopper_button"
               android:layout_width="0dip"
               android:layout_height="wrap_content"
               android:layout_weight="1"
@@ -221,7 +221,7 @@
               android:drawableLeft="@drawable/shopper_icon"
               android:drawablePadding="4dip"
               android:text="@string/button_google_shopper"
-              android:visibility="gone"/ -->
+              android:visibility="gone"/>
 
     </LinearLayout>
 

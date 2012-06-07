@@ -16,10 +16,8 @@
 
 package curt.android.scanner;
 
-import com.google.zxing.ResultPoint;
-import curt.android.scanner.CameraManager;
-
-import curt.android.ginger.R;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -30,8 +28,10 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.zxing.ResultPoint;
+
+import curt.android.camera.CameraManager;
+import curt.android.ginger.R;
 
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder rectangle and partial
@@ -103,6 +103,7 @@ public final class ViewfinderView extends View {
     } else {
 
       // Draw a two pixel solid black border inside the framing rect
+      
       paint.setColor(frameColor);
       canvas.drawRect(frame.left, frame.top, frame.right + 1, frame.top + 2, paint);
       canvas.drawRect(frame.left, frame.top + 2, frame.left + 2, frame.bottom - 1, paint);

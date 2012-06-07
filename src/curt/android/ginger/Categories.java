@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import curt.android.ginger.CategoryObject.Category;
 import curt.android.ginger.CategoryObject.CategoryAdapter;
-
+import curt.android.*;
 /**
  * @author alexninneman
  *
