@@ -23,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -163,16 +164,17 @@ public class Scanner extends Activity implements SurfaceHolder.Callback {
     //showHelpOnFirstLaunch();
   }
 
-  @Override
+  @SuppressWarnings("null")
+@Override
   protected void onResume() {
     super.onResume();
-
+    
     // CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
     // want to open the camera driver and measure the screen size if we're going to show the help on
     // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
     // off screen.
     cameraManager = new CameraManager(this.getApplication());
-
+    
     viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
     viewfinderView.setCameraManager(cameraManager);
 
